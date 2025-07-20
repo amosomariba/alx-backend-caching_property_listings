@@ -19,7 +19,9 @@ services:
     image: redis:latest
     container_name: redis_cache
     ports:
-       - "6380:6379"
+      - "6379:6379"
+    volumes:
+      - redis_data:/data   # <--- this is what was missing
     networks:
       - backend
 
@@ -28,3 +30,4 @@ networks:
 
 volumes:
   postgres_data:
+  redis_data:   # <--- define the redis_data volume here
