@@ -30,15 +30,17 @@ def get_redis_cache_metrics():
         }
     """
     try:
-        # Use the same cache alias you configured in settings (default)
         r = get_redis_connection("default")
+        info = r.info()
 
-        info = r.info()  # full INFO dictionary from Redis
         hits = info.get("keyspace_hits", 0)
         misses = info.get("keyspace_misses", 0)
+        total_requests = hits + misses
 
-        total = hits + misses
-        hit_ratio = (hits / total) if total > 0 else None
+        if total_requests > 0:
+            hit_ratio = hits / total_requests
+        else:
+            hit_ratio = 0  # or None, depending on your requirement
 
         metrics = {
             "hits": hits,
@@ -57,6 +59,3 @@ def get_redis_cache_metrics():
             "hit_ratio": None,
             "error": str(e),
         }
-
-
-
